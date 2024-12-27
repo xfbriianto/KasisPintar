@@ -42,6 +42,7 @@
                                 name="tanggal_transaksi" 
                                 class="form-control @error('tanggal_transaksi') is-invalid @enderror"
                                 value="{{ old('tanggal_transaksi', now()->format('Y-m-d')) }}"
+                                required
                             >
                             @error('tanggal_transaksi')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -54,6 +55,7 @@
                                 name="pembeli_id" 
                                 class="form-control @error('pembeli_id') is-invalid @enderror"
                                 id="pembeli-select"
+                                required
                             >
                                 <option value="">Pilih Pembeli</option>
                                 @foreach($pembelis as $pembeli)
@@ -78,6 +80,7 @@
                                 name="kode_barang" 
                                 class="form-control @error('kode_barang') is-invalid @enderror"
                                 id="barang-select"
+                                required
                             >
                                 <option value="">Pilih Barang</option>
                                 @foreach($barangs as $barang)
@@ -105,6 +108,7 @@
                                 value="{{ old('jumlah_barang', 1) }}"
                                 min="1"
                                 id="jumlah-barang"
+                                required
                             >
                             @error('jumlah_barang')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -125,7 +129,7 @@
                                 readonly
                             >
                         </div>
-                    </div>
+                    </ ```blade
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Total Harga</label>
@@ -148,6 +152,7 @@
                     <select 
                         name="status" 
                         class="form-control @error('status') is-invalid @enderror"
+                        required
                     >
                         <option value="pending" {{ old('status', 'pending') == 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="selesai" {{ old('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
@@ -186,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fungsi update total harga
     function updateTotalHarga() {
         const selectedOption = barangSelect.options[barangSelect.selectedIndex];
-         const hargaSatuan = selectedOption ? parseFloat(selectedOption.getAttribute('data-harga')) : 0;
+        const hargaSatuan = selectedOption ? parseFloat(selectedOption.getAttribute('data-harga')) : 0;
         const jumlahBarang = parseInt(jumlahBarangInput.value) || 1;
         const stok = selectedOption ? parseInt(selectedOption.getAttribute('data-stok')) : 0;
 

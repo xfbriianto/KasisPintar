@@ -3,15 +3,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class Transaksi extends Model
 {
-    // Pastikan nama tabel benar
     protected $table = 'transaksis';
 
-    // Gunakan snake_case untuk kolom
     protected $fillable = [
         'kode_transaksi', 
-        'pembeli_id',      // Pastikan nama kolom benar
+        'pembeli_id',
         'kode_barang', 
         'jumlah_barang', 
         'total_harga', 
@@ -22,17 +22,13 @@ class Transaksi extends Model
     // Relasi
     public function pembeli()
     {
-        return $this->belongsTo(Pembeli::class, 'pembeli_id');
-    }
+    return $this->belongsTo(Pembeli::class, 'pembeli_id')->withoutGlobalScopes();
+}
+
+    
 
     public function barang()
     {
         return $this->belongsTo(Barang::class, 'kode_barang', 'kode_barang');
-    }
-
-    public function barangs(): BelongsToMany
-    {
-        return $this->belongsToMany(Barang::class, 'detail_transaksis', 'transaksi_id', 'barang_id')
-            ->withPivot('jumlah', 'harga_satuan', 'subtotal');
     }
 }

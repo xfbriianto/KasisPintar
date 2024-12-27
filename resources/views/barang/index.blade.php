@@ -3,12 +3,17 @@
 @section('content')
 <div class="container-fluid">
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title">Data Barang</h3>
-            <a href="{{ route('barang.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Tambah Barang
-            </a>
-        </div>
+    <div class="card-header d-flex justify-content-between align-items-center">
+    <h3 class="card-title">Data Barang</h3>
+    <div>
+        <a href="{{ route('dashboard') }}" class="btn btn-secondary me-2">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a href="{{ route('barang.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Tambah Barang
+        </a>
+    </div>
+</div>
         <div class="card-body">
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">

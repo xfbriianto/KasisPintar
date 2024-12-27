@@ -7,6 +7,7 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\DetailTransaksiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\KategoriController;
 
 // Route Barang
 Route::prefix('barang')->group(function () {
@@ -45,25 +46,41 @@ Route::prefix('transaksi')->group(function () {
 });
 
 // Route Detail Transaksi
-Route::prefix('detail-transaksi')->group(function () {
-    Route::get('/', [DetailTransaksiController::class, 'index'])->name('detail-transaksi.index');
-    Route::get('/create', [DetailTransaksiController::class, 'create'])->name('detail-transaksi.create');
-    Route::post('/', [DetailTransaksiController::class, 'store'])->name('detail-transaksi.store');
-    Route::get('/{detailTransaksi}', [DetailTransaksiController::class, 'show'])->name('detail-transaksi.show');
-    Route::get('/{detailTransaksi}/edit', [DetailTransaksiController::class, 'edit'])->name('detail-transaksi.edit');
-    Route::put('/{detailTransaksi}', [DetailTransaksiController::class, 'update'])->name('detail-transaksi.update');
-    Route::delete('/{detailTransaksi}', [DetailTransaksiController::class, 'destroy'])->name('detail-transaksi.destroy');
-});
+// Route::prefix('detail-transaksi')->group(function () {
+//     Route::get('/', [DetailTransaksiController::class, 'index'])->name('detail-transaksi.index');
+//     Route::get('/create', [DetailTransaksiController::class, 'create'])->name('detail-transaksi.create');
+//     Route::post('/', [DetailTransaksiController::class, 'store'])->name('detail-transaksi.store');
+//     Route::get('/{detailTransaksi}', [DetailTransaksiController::class, 'show'])->name('detail-transaksi.show');
+//     Route::get('/{detailTransaksi}/edit', [DetailTransaksiController::class, 'edit'])->name('detail-transaksi.edit');
+//     Route::put('/{detailTransaksi}', [DetailTransaksiController::class, 'update'])->name('detail-transaksi.update');
+//     Route::delete('/{detailTransaksi}', [DetailTransaksiController::class, 'destroy'])->name('detail-transaksi.destroy');
+// });
 
 // Contoh Route Laporan dan Statistik
-Route::prefix('laporan')->group(function () {
-    Route::get('/penjualan', [TransaksiController::class, 'laporanPenjualan'])->name('laporan.penjualan');
-    Route::get('/stok-barang', [BarangController::class, 'laporanStok'])->name('laporan.stok');
-    Route::get('/pembeli-aktif', [PembeliController::class, 'pembeliTeraktif'])->name('laporan.pembeli-aktif');
-});
+// Route::prefix('laporan')->group(function () {
+//     Route::get('/penjualan', [TransaksiController::class, 'laporanPenjualan'])->name('laporan.penjualan');
+//     Route::get('/stok-barang', [BarangController::class, 'laporanStok'])->name('laporan.stok');
+//     Route::get('/pembeli-aktif', [PembeliController::class, 'pembeliTeraktif'])->name('laporan.pembeli-aktif');
+// });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
 
+
+
+
 Route::resource('supplier', SupplierController::class);
+
+// // In web.php or your routes file
+// Route::get('/routes', function() {
+//     $routes = Route::getRoutes();
+//     foreach($routes as $route) {
+//         if(str_contains($route->uri, 'transaksi')) {
+//             dump([
+//                 'uri' => $route->uri,
+//                 'middleware' => $route->middleware()
+//             ]);
+//         }
+//     }
+// });

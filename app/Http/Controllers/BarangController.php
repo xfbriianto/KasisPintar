@@ -8,14 +8,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Model;
 
 class BarangController extends Controller
 {
     public function index()
-    {
-        $barangs = Barang::with('kategori')->paginate(10);
-        return view('barang.index', compact('barangs'));
-    }
+{
+    // Mengambil data barang dengan relasi kategori dan melakukan paginasi
+    $barangs = Barang::with('kategori')->paginate(10);
+    
+    // Mengembalikan tampilan dengan data barang
+    return view('barang.index', compact('barangs'));
+    
+    // Jika Anda ingin mengembalikan data dalam format JSON, gunakan ini sebagai gantinya:
+        //$barangs = Barang::all(); // Ambil semua data barang
+        //return response()->json($barangs); 
+}
 
     public function create()
     {

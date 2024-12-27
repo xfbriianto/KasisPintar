@@ -27,22 +27,14 @@ class PembeliController extends Controller
     }
 
     public function store(Request $request)
-{
-    // Tambahkan debug logging
-    \Log::info('Store Pembeli Request:', $request->all());
-
-    $validatedData = $request->validate([
-        'kode_pembeli' => 'required|unique:pembelis,kode_pembeli',
-        'nama_pembeli' => 'required|max:255',
-        'alamat' => 'required',
-        'telepon' => 'required|max:15'
-    ], [
-        // Custom error messages
-        'kode_pembeli.unique' => 'Kode pembeli sudah ada.',
-        'nama_pembeli.required' => 'Nama pembeli wajib diisi.',
-        'alamat.required' => 'Alamat wajib diisi.',
-        'telepon.required' => 'Nomor telepon wajib diisi.'
-    ]);
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'kode_pembeli' => 'required', // Ensure pembeli exists in the database
+            'nama_pembeli' => 'required|string|max:255', // Ensure nama_pembeli is a string and not too long
+            'alamat' => 'required|string|max:255', // Ensure alamat is a string and not too long
+            'telepon' => 'required|string|max:15', // Ensure telepon is a string and not too long
+        ]);
 
     try {
         // Debug: Cetak data yang akan disimpan
@@ -167,6 +159,6 @@ class PembeliController extends Controller
             ->orWhere('kode_pembeli', 'LIKE', "%{$query}%")
             ->paginate(10);
 
-        return view('pembelis.index', compact('pembelis', 'query'));
+        return view('pembeli.index', compact('pembelis', 'query'));
     }
 }
