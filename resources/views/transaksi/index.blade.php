@@ -21,7 +21,6 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Kode Transaksi</th>
-                                    <th>Pembeli</th>
                                     <th>Tanggal</th>
                                     <th>Total Harga</th>
                                     <th>Status</th>
@@ -33,7 +32,6 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $transaksi->kode_transaksi }}</td>
-                                        <td>{{ $transaksi->pembeli->no_pembeli ?? 'Tidak Ada' }}</td>
                                         <td>
                                             {{ 
                                                 is_string($transaksi->tanggal_transaksi) 

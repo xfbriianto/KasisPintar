@@ -50,28 +50,28 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Pembeli</label>
-                            <select 
-                                name="pembeli_id" 
-                                class="form-control @error('pembeli_id') is-invalid @enderror"
-                                id="pembeli-select"
-                                required
-                            >
-                                <option value="">Pilih Pembeli</option>
-                                @foreach($pembelis as $pembeli)
-                                    <option 
-                                        value="{{ $pembeli->id }}"
-                                        {{ old('pembeli_id') == $pembeli->id ? 'selected' : '' }}
-                                    >
-                                        {{ $pembeli->no_pembeli }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('pembeli_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
+    <label>Pembeli</label>
+    <select 
+        name="pembeli_id" 
+        class="form-control @error('pembeli_id') is-invalid @enderror"
+        id="pembeli-select"
+        required
+    >
+        <option value="">Pilih Pembeli</option>
+        @foreach($pembelis as $pembeli)
+            <option 
+                value="{{ $pembeli->id }}"
+                {{ old('pembeli_id') == $pembeli->id ? 'selected' : '' }}
+            >
+                {{ $pembeli->kode_pembeli }}
+            </option>
+        @endforeach
+    </select>
+    @error('pembeli_id')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
+
 
                     <div class="col-md-6">
                         <div class="form-group">

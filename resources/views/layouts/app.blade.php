@@ -11,53 +11,78 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* Sidebar styles */
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Sidebar Styles */
         #sidebar {
             min-height: 100vh;
-            width: 250px;
-            background: #333;
+            width: 270px;
+            background: #2c3e50;
             color: white;
             position: fixed;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            z-index: 999;
         }
 
         #sidebar .sidebar-header {
             padding: 20px;
-            background: #222;
+            background: #1a252f;
+            text-align: center;
+            border-bottom: 1px solid #444;
         }
 
         #sidebar ul.components {
-            padding: 20px 0;
+            padding: 0;
+            list-style: none;
+            margin: 0;
+        }
+
+        #sidebar ul li {
+            border-bottom: 1px solid #444;
         }
 
         #sidebar ul li a {
             padding: 15px 20px;
-            display: block;
-            color: white;
+            display: flex;
+            align-items: center;
+            color: #bdc3c7;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
         #sidebar ul li a:hover {
-            background: #444;
+            background: #34495e;
+            color: #ecf0f1;
+        }
+
+        #sidebar ul li a.active {
+            background: #2980b9;
+            color: white;
+            font-weight: bold;
         }
 
         #sidebar ul li a i {
-            margin-right: 10px;
-            width: 20px;
+            margin-right: 15px;
+            font-size: 18px;
         }
 
         #content {
-            margin-left: 250px;
+            margin-left: 270px;
             padding: 20px;
-            min-height: 100vh;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
         @media (max-width: 768px) {
             #sidebar {
-                margin-left: -250px;
+                margin-left: -270px;
             }
             #sidebar.active {
                 margin-left: 0;
@@ -67,10 +92,24 @@
             }
         }
 
-        /* Active menu item */
-        #sidebar ul li a.active {
-            background: #444;
-            border-left: 4px solid #007bff;
+        /* Sidebar Toggle Button */
+        #sidebarCollapse {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #sidebarCollapse:hover {
+            background: #34495e;
+        }
+
+        /* Responsive Header for Mobile */
+        .navbar-light {
+            background-color: #ffffff;
+            border-bottom: 1px solid #ddd;
         }
     </style>
     
@@ -81,7 +120,7 @@
         <!-- Sidebar -->
         <nav id="sidebar">
             <div class="sidebar-header">
-                <h5 class="mb-0">{{ config('app.name', 'Aplikasi Inventory') }}</h5>
+                <h5>{{ config('app.name', 'Aplikasi Inventory') }}</h5>
             </div>
 
             <ul class="list-unstyled components">
@@ -115,8 +154,8 @@
 
         <!-- Page Content -->
         <div id="content">
-            <!-- Toggle Button for mobile -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-light d-lg-none">
+            <!-- Toggle Button for Mobile -->
+            <nav class="navbar navbar-expand-lg navbar-light d-lg-none">
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-dark">
                         <i class="fas fa-bars"></i>
