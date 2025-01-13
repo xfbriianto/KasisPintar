@@ -63,7 +63,7 @@
                                         value="{{ $pembeli->id }}"
                                         {{ old('pembeli_id') == $pembeli->id ? 'selected' : '' }}
                                     >
-                                        {{ $pembeli->nama_pembeli }}
+                                        {{ $pembeli->no_pembeli }}
                                     </option>
                                 @endforeach
                             </select>

@@ -33,7 +33,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $transaksi->kode_transaksi }}</td>
-                                        <td>{{ $transaksi->pembeli->nama_pembeli ?? 'Tidak Ada' }}</td>
+                                        <td>{{ $transaksi->pembeli->no_pembeli ?? 'Tidak Ada' }}</td>
                                         <td>
                                             {{ 
                                                 is_string($transaksi->tanggal_transaksi) 

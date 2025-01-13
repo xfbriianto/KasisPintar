@@ -38,21 +38,6 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="nama_pembeli" class="form-label">Nama Pembeli</label>
-                    <input 
-                        type="text" 
-                        class="form-control @error('nama_pembeli') is-invalid @enderror" 
-                        id="nama_pembeli" 
-                        name="nama_pembeli" 
-                        value="{{ old('nama_pembeli', $pembeli->nama_pembeli) }}"
-                        required
-                    >
-                    @error('nama_pembeli')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
                     <label for="alamat" class="form-label">Alamat</label>
                     <textarea 
                         class="form-control @error('alamat') is-invalid @enderror" 

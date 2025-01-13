@@ -36,10 +36,6 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Nama Pembeli</th>
-                                        <td>{{ $pembeli->nama_pembeli ?? 'Tidak Diketahui' }}</td>
-                                    </tr>
-                                    <tr>
                                         <th>Alamat</th>
                                         <td>{{ $pembeli->alamat ?? 'Tidak Ada' }}</td>
                                     </tr>

@@ -21,7 +21,6 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Pembeli</th>
                         <th>Kode Pembeli</th>
                         <th>Alamat</th>
                         <th>telepon</th>
@@ -32,7 +31,6 @@
                     @forelse($pembelis as $index => $pembeli)
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td>{{ $pembeli->nama_pembeli}}</td>
                             <td>{{ $pembeli->kode_pembeli }}</td>
                             <td>{{ $pembeli->alamat }}</td>
                             <td>{{ $pembeli->telepon }}</td>

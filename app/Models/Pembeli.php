@@ -8,7 +8,7 @@ class Pembeli extends Model
 {
     protected $fillable = [
         'kode_pembeli',
-        'nama_pembeli',
+        'no_pembeli',
         'alamat',
         'telepon',
     ];

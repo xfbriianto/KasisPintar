@@ -29,11 +29,11 @@ class DashboardController extends Controller
     public function storeTransaction(Request $request)
     {
         // Validasi data yang diterima
-        $request->validate([
+        $validatedData = $request->validate([
             'kode_pembeli' => 'required',
-            'nama_pembeli' => 'required',
-            'alamat' => 'required',
+            'no_pembeli' => 'nullable|string|max:255', // Jadikan no_pembeli opsional
             'telepon' => 'required',
+            'alamat' => 'nullable|string|max:255', // Alamat opsional
             'kode_transaksi' => 'required',
             'jumlah_barang' => 'required|integer',
             'total_harga' => 'required|numeric',
@@ -41,19 +41,19 @@ class DashboardController extends Controller
 
         // Cek apakah pembeli sudah ada, jika tidak, buat pembeli baru
         $pembeli = Pembeli::firstOrCreate(
-            ['kode_pembeli' => $request->kode_pembeli], // Cek berdasarkan kode pembeli
+            ['kode_pembeli' => $validatedData['kode_pembeli']], // Cek berdasarkan kode pembeli
             [
-                'nama_pembeli' => $request->nama_pembeli,
-                'alamat' => $request->alamat,
-                'telepon' => $request->telepon,
+                'no_pembeli' => $validatedData['no_pembeli'] ?? 'Tidak Diketahui',
+                'alamat' => $validatedData['alamat'] ?? 'Tidak Diketahui',
+                'telepon' => $validatedData['telepon'],
             ]
         );
 
         // Tambahkan transaksi
         Transaksi::create([
-            'kode_transaksi' => $request->kode_transaksi,
-            'jumlah_barang' => $request->jumlah_barang,
-            'total_harga' => $request->total_harga,
+            'kode_transaksi' => $validatedData['kode_transaksi'],
+            'jumlah_barang' => $validatedData['jumlah_barang'],
+            'total_harga' => $validatedData['total_harga'],
             'tanggal_transaksi' => now(),
             'pembeli_id' => $pembeli->id, // Hubungkan transaksi dengan pembeli
         ]);

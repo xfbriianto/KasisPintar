@@ -13,19 +13,16 @@ class PembeliSeeder extends Seeder
         $pembelis = [
             [
                 'kode_pembeli' => 'P001',
-                'nama_pembeli' => 'Celvin',
                 'alamat' => 'Jl. Melati No. 5',
                 'telepon' => '081234567890'
             ],
             [
                 'kode_pembeli' => 'P002',
-                'nama_pembeli' => 'Avail',
                 'alamat' => 'Jl. Anggrek No. 3',
                 'telepon' => '081298765432'
             ],
             [
                 'kode_pembeli' => 'P003',
-                'nama_pembeli' => 'Budi Santoso',
                 'alamat' => 'Jl. Kenanga No. 12',
                 'telepon' => '087654321098'
             ]

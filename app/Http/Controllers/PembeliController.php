@@ -30,11 +30,12 @@ class PembeliController extends Controller
     {
         // Validate the incoming request data
         $validatedData = $request->validate([
-            'kode_pembeli' => 'required', // Ensure pembeli exists in the database
-            'nama_pembeli' => 'required|string|max:255', // Ensure nama_pembeli is a string and not too long
-            'alamat' => 'required|string|max:255', // Ensure alamat is a string and not too long
-            'telepon' => 'required|string|max:15', // Ensure telepon is a string and not too long
+            'kode_pembeli' => 'required', // Pastikan kode pembeli ada
+            'no_pembeli' => 'nullable|string|max:255', // Jadikan no_pembeli opsional
+            'telepon' => 'required|string|max:15', // Pastikan telepon adalah string dengan panjang maksimal 15
+            'alamat' => 'required|string|max:255',
         ]);
+        
 
     try {
         // Debug: Cetak data yang akan disimpan
@@ -98,21 +99,16 @@ class PembeliController extends Controller
         // Validasi data
         $validatedData = $request->validate([
             'kode_pembeli' => [
-                'required',
-                // Abaikan unique untuk kode pembeli saat ini
-                Rule::unique('pembelis', 'kode_pembeli')->ignore($pembeli->id)
-            ],
-            'nama_pembeli' => 'required|max:255',
-            'alamat' => 'required',
-            'telepon' => 'required|max:15'
+            'required', Rule::unique('pembelis', 'kode_pembeli')->ignore($pembeli->id)],
+            'telepon' => 'required|max:15', // Tetap required
+            'alamat' => 'required|string|max:255',
         ], [
-            // Pesan error kustom
             'kode_pembeli.unique' => 'Kode pembeli sudah digunakan.',
-            'nama_pembeli.required' => 'Nama pembeli wajib diisi.',
-            'alamat.required' => 'Alamat wajib diisi.',
-            'telepon.required' => 'Nomor telepon wajib diisi.'
+            'telepon.required' => 'Nomor telepon wajib diisi.',
+            'alamat' => $request->alamat,
         ]);
-    
+        
+        
         try {
             // Update pembeli
             $pembeli->update($validatedData);
@@ -155,7 +151,7 @@ class PembeliController extends Controller
     {
         $query = $request->input('query');
         
-        $pembelis = Pembeli::where('nama_pembeli', 'LIKE', "%{$query}%")
+        $pembelis = Pembeli::where('no_pembeli', 'LIKE', "%{$query}%")
             ->orWhere('kode_pembeli', 'LIKE', "%{$query}%")
             ->paginate(10);
 
