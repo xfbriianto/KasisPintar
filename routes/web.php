@@ -43,6 +43,9 @@ Route::prefix('transaksi')->group(function () {
     
     // Route khusus untuk detail transaksi
     Route::get('/{transaksi}/detail', [TransaksiController::class, 'showDetails'])->name('transaksi.details');
+    Route::resource('detail-transaksis', DetailTransaksiController::class);
+    Route::resource('transaksis', TransaksiController::class);
+    Route::get('/transaksi/{id}', [TransaksiController::class, 'show'])->name('transaksi.show');
 });
 
 // Route Detail Transaksi

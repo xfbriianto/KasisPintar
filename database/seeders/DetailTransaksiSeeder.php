@@ -31,4 +31,11 @@ class DetailTransaksiSeeder extends Seeder
 
         DB::table('detail_transaksis')->insert($detailTransaksis);
     }
+        public function show($id)
+{
+    // Cari transaksi berdasarkan id
+    $transaksi = Transaksi::with(['pembeli', 'barang'])->findOrFail($id);
+
+    return view('transaksi.show', compact('transaksi'));
 }
+    }

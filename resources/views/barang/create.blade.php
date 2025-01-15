@@ -14,8 +14,8 @@
                         <label class="form-label">Kode Barang</label>
                         <input type="text" name="kode_barang" 
                                class="form-control @error('kode_barang') is-invalid @enderror" 
-                               value="{{ old('kode_barang') }}" 
-                               required>
+                               value="{{ $newKodeBarang }}" 
+                               readonly>
                         @error('kode_barang')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

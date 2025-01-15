@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\DetailTransaksi;
@@ -11,7 +12,8 @@ class DetailTransaksiController extends Controller
     public function index()
     {
         $detailTransaksis = DetailTransaksi::with(['transaksi', 'barang'])->get();
-        return view('detail_transaksis.index', compact('detailTransaksis'));
+        $transaksis = Transaksi::all(); // Ambil semua data transaksi
+        return view('detail_transaksis.index', compact('detailTransaksis', 'transaksis'));
     }
 
     public function create()
@@ -52,7 +54,7 @@ class DetailTransaksiController extends Controller
             'barang_id' => 'required|exists:barangs,id',
             'jumlah_barang' => 'required|integer|min:1',
             'harga_jual' => 'required|numeric|min:0',
-            'subtotal' => 'required| numeric|min:0',
+            'subtotal' => 'required|numeric|min:0',
             'tanggal_pembelian' => 'required|date'
         ]);
 
@@ -69,4 +71,19 @@ class DetailTransaksiController extends Controller
         return redirect()->route('detail_transaksis.index')
             ->with('success', 'Detail Transaksi berhasil dihapus');
     }
+
+    public function show($id)
+{
+    
+    // Ambil data detail transaksi beserta relasi
+    $detailTransaksi = DetailTransaksi::with(['transaksi.pembeli', 'barang'])->findOrFail($id);
+
+    // Kirim data ke view
+    return view('detail_transaksis.show', compact('detailTransaksi'));
+    $transaksi = Transaksi::with('barang')->find($id);
+
+
+}
+
+
 }

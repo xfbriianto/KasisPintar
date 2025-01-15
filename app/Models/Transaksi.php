@@ -22,7 +22,8 @@ class Transaksi extends Model
     // Relasi
     public function pembeli()
     {
-    return $this->belongsTo(Pembeli::class, 'pembeli_id')->withoutGlobalScopes();
+    return $this->belongsTo(Pembeli::class, 'pembeli_id');
+    
 }
 
     
@@ -30,5 +31,22 @@ class Transaksi extends Model
     public function barang()
     {
         return $this->belongsTo(Barang::class, 'kode_barang', 'kode_barang');
+        return $this->belongsToMany(Barang::class)->withPivot('jumlah', 'harga');
+        return $this->belongsToMany(Barang::class, 'transaksi_barang', 'transaksi_id', 'barang_id')
+        ->withPivot('jumlah', 'harga');
+          return $this->belongsToMany(
+        Barang::class,
+        'transaksi_barang',    // Nama pivot table
+        'transaksi_id',        // Foreign key di pivot table untuk transaksi
+        'barang_id'            // Foreign key di pivot table untuk barang
+    )->withPivot('jumlah', 'harga'); // Pastikan kolom pivot ada
+
     }
+
+    public function detailTransaksi()
+{
+    return $this->hasMany(DetailTransaksi::class, 'transaksi_id');
 }
+
+}
+

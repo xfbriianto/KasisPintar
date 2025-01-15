@@ -31,5 +31,14 @@ class Barang extends Model
   {
         return $this->belongsToMany(Transaksi::class, 'detail_transaksis', 'barang_id', 'transaksi_id')
             ->withPivot('jumlah', 'harga_satuan', 'subtotal');
+            return $this->belongsToMany(Transaksi::class)->withPivot('jumlah', 'harga');
+            return $this->belongsToMany(Transaksi::class, 'transaksi_barang', 'barang_id', 'transaksi_id')
+                    ->withPivot('jumlah', 'harga');
+                    return $this->belongsToMany(
+                        Transaksi::class,
+                        'transaksi_barang',
+                        'barang_id',
+                        'transaksi_id'
+                    )->withPivot('jumlah', 'harga');
     }
 }

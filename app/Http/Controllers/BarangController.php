@@ -7,28 +7,35 @@ use App\Models\Kategori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Eloquent\Model;
 
 class BarangController extends Controller
 {
     public function index()
-{
-    // Mengambil data barang dengan relasi kategori dan melakukan paginasi
-    $barangs = Barang::with('kategori')->paginate(10);
-    
-    // Mengembalikan tampilan dengan data barang
-    return view('barang.index', compact('barangs'));
-    
-    // Jika Anda ingin mengembalikan data dalam format JSON, gunakan ini sebagai gantinya:
-        //$barangs = Barang::all(); // Ambil semua data barang
-        //return response()->json($barangs); 
-}
+    {
+        // Mengambil data barang dengan relasi kategori dan melakukan paginasi
+        $barangs = Barang::with('kategori')->paginate(10);
+        
+        // Mengembalikan tampilan dengan data barang
+        return view('barang.index', compact('barangs'));
+    }
 
     public function create()
     {
+        // Ambil data kategori
         $kategoris = Kategori::all();
-        return view('barang.create', compact('kategoris')); // Ganti 'barangs.create' menjadi 'barang.create'
+
+        // Generate kode barang otomatis
+        $lastBarang = Barang::orderBy('id', 'desc')->first();
+        $newKodeBarang = 'BR001'; // Default kode barang pertama
+
+        if ($lastBarang) {
+            // Ekstrak angka dari kode barang terakhir dan tambahkan 1
+            $lastNumber = (int) substr($lastBarang->kode_barang, 2);
+            $newKodeBarang = 'BR' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        }
+
+        // Kirim data ke view
+        return view('barang.create', compact('kategoris', 'newKodeBarang'));
     }
 
     public function store(Request $request)
@@ -75,11 +82,8 @@ class BarangController extends Controller
 
     public function update(Request $request, Barang $barang)
     {
-        // Tambah debugging
-        \Log::info('Update Barang Request:', $request->all());
-    
         $validatedData = $request->validate([
-            'kode_barang' => 'required|unique:barangs,kode_barang,'.$barang->id,
+            'kode_barang' => 'required|unique:barangs,kode_barang,' . $barang->id,
             'kategori_id' => 'required|exists:kategoris,id',
             'nama_barang' => 'required|max:255',
             'harga_jual' => 'required|numeric|min:0',
@@ -88,27 +92,18 @@ class BarangController extends Controller
             'diskon' => 'nullable|numeric|min:0|max:100',
             'tipe_barang' => 'nullable|max:255'
         ]);
-    
+
         try {
             DB::beginTransaction();
             
-            // Tambah debugging
-            \Log::info('Validated Data:', $validatedData);
-    
-            $updated = $barang->update($validatedData);
-    
-            // Tambah debugging
-            \Log::info('Update Result:', ['updated' => $updated]);
-    
+            $barang->update($validatedData);
+            
             DB::commit();
             
             return redirect()->route('barang.index')
                 ->with('success', 'Barang berhasil diupdate');
         } catch (\Exception $e) {
             DB::rollback();
-            
-            // Tambah debugging
-            \Log::error('Update Barang Error: ' . $e->getMessage());
             
             return redirect()->back()
                 ->with('error', 'Gagal mengupdate barang: ' . $e->getMessage())

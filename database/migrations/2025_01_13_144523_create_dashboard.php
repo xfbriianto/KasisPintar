@@ -1,13 +1,15 @@
 <?php
-namespace App\Http\Controllers;
 
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Barang;
 use App\Models\Pembeli;
 use App\Models\Transaksi;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class DashboardController extends Controller
+class CreateDashboardTable extends Migration
 {
     public function index()
     {

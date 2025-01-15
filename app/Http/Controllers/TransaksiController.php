@@ -182,5 +182,9 @@ public function create()
             Log::error('Error hapus transaksi: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Gagal menghapus transaksi: ' . $e->getMessage()]);
         }
+    }public function show($id)
+    {
+        $transaksi = Transaksi::with(['pembeli', 'barang'])->findOrFail($id);
+        return view('transaksi.show', compact('transaksi'));
     }
 }
