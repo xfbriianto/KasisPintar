@@ -16,6 +16,7 @@ class Transaksi extends Model
         'jumlah_barang', 
         'total_harga', 
         'tanggal_transaksi', 
+        'jam_transaksi',
         'status'
     ];
 
@@ -49,4 +50,3 @@ class Transaksi extends Model
 }
 
 }
-

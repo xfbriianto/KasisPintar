@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\KategoriController;
 
+
 // Route Barang
 Route::prefix('barang')->group(function () {
     Route::get('/', [BarangController::class, 'index'])->name('barang.index');
@@ -20,7 +21,8 @@ Route::prefix('barang')->group(function () {
     Route::delete('/{barang}', [BarangController::class, 'destroy'])->name('barang.destroy');
 });
 
-// Route Pembeli
+// Route untuk Pembeli
+
 Route::prefix('pembeli')->group(function () {
     Route::get('/', [PembeliController::class, 'index'])->name('pembeli.index');
     Route::get('/create', [PembeliController::class, 'create'])->name('pembeli.create');
@@ -87,3 +89,7 @@ Route::resource('supplier', SupplierController::class);
 //         }
 //     }
 // });
+
+Route::get('/transaksi/pembeli/create', [TransaksiController::class, 'createPembeli'])->name('transaksi.pembeli.create');
+Route::post('/transaksi/pembeli', [TransaksiController::class, 'storePembeli'])->name('transaksi.pembeli.store');
+Route::get('/transaksi/pembeli/list', [TransaksiController::class, 'getPembelis'])->name('transaksi.pembeli.list');

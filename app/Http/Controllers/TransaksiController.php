@@ -7,126 +7,150 @@ use App\Models\Barang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;  // Menambahkan Carbon untuk manipulasi tanggal dan waktu
 
 class TransaksiController extends Controller
 {
-    // Method untuk generate kode transaksi otomatis
-   // Di TransaksiController, tambahkan method baru
-private function generateKodeTransaksi()
-{
-    // Ambil transaksi terakhir
-    $lastTransaksi = Transaksi::orderBy('id', 'desc')->first();
+    /**
+     * Generate kode transaksi otomatis
+     */
+    
+    private function generateKodeTransaksi()
+    {
+        $lastTransaksi = Transaksi::orderBy('id', 'desc')->first();
+        $newNumber = $lastTransaksi ? intval(substr($lastTransaksi->kode_transaksi, 1)) + 1 : 1;
 
-    if ($lastTransaksi) {
-        // Ekstrak nomor terakhir
-        $lastNumber = intval(substr($lastTransaksi->kode_transaksi, 1));
-        $newNumber = $lastNumber + 1;
-    } else {
-        $newNumber = 1;
+        return 'T' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
 
-    // Format kode transaksi dengan padding
-    return 'T' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
-}
+    public function createPembeli()
+    {
+        $newKodePembeli = $this->generateKodePembeli();
+        return view('transaksi.create_pembeli', compact('newKodePembeli'));
+    }
 
-// Dalam method create()
-public function create()
+    private function generateKodePembeli()
+    {
+        $lastPembeli = Pembeli::orderBy('id', 'desc')->first();
+        $newNumber = $lastPembeli ? intval(substr($lastPembeli->kode_pembeli, 2)) + 1 : 1;
+
+        return 'P' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+    public function storePembeli(Request $request)
 {
-    $pembelis = Pembeli::all();
-    $barangs = Barang::all();
-    $newKodeTransaksi = $this->generateKodeTransaksi();
-    return view('transaksi.create', compact('pembelis', 'barangs', 'newKodeTransaksi'));
+    $validatedData = [
+        'kode_pembeli' => $this->generateKodePembeli()
+    ];
+    
+    $pembeli = Pembeli::create($validatedData);
+
+    return redirect()->route('transaksi.create')
+        ->with('selected_pembeli_id', $pembeli->id);
 }
 
+    public function getPembelis()
+    {
+        $pembelis = Pembeli::select('id', 'nama', 'telepon')->get();
+        return response()->json($pembelis);
+    }
+
+    /**
+     * Halaman index transaksi
+     */
     public function index()
     {
-        $transaksis = Transaksi::with(['pembeli', 'barang'])->get();
+        // Mengambil semua data transaksi, termasuk relasi dengan pembeli dan barang
+        $transaksis = Transaksi::all();
         return view('transaksi.index', compact('transaksis'));
     }
 
+    /**
+     * Form tambah transaksi
+     */
+    public function create()
+    {
+        $pembelis = Pembeli::all();
+        $barangs = Barang::all();
+        $newKodeTransaksi = $this->generateKodeTransaksi();
+
+        return view('transaksi.create', compact('pembelis', 'barangs', 'newKodeTransaksi'));
+    }
+
+    /**
+     * Simpan transaksi baru
+     */
     public function store(Request $request)
     {
         try {
             return DB::transaction(function () use ($request) {
-                // Validasi
+                // Validasi data input
                 $validatedData = $request->validate([
-                    'kode_transaksi' => 'required|unique:transaksis,kode_transaksi',
                     'pembeli_id' => 'required|exists:pembelis,id',
                     'kode_barang' => 'required|exists:barangs,kode_barang',
                     'jumlah_barang' => 'required|numeric|min:1',
                     'total_harga' => 'required|numeric|min:0',
-                    'tanggal_transaksi' => 'required|date',
                     'status' => 'required|in:selesai,pending,batal'
                 ]);
-    
-                // Debugging: Periksa data yang akan disimpan
-                \Log::info('Data Transaksi:', $validatedData);
-    
-                // Cari barang
-                $barang = Barang::where('kode_barang', $request->kode_barang)
-                    ->lockForUpdate()
-                    ->first();
-                
-                // Cek stok
+
+                // Cari barang dan cek stok
+                $barang = Barang::where('kode_barang', $request->kode_barang)->lockForUpdate()->first();
+
                 if (!$barang || $barang->stok < $request->jumlah_barang) {
                     throw new \Exception('Stok barang tidak mencukupi');
                 }
-    
-                // Kurangi stok
+
+                // Kurangi stok barang
                 $barang->decrement('stok', $request->jumlah_barang);
-    
-                // Buat transaksi dengan data yang lengkap
-                $transaksi = new Transaksi();
-                $transaksi->kode_transaksi = $validatedData['kode_transaksi'];
-                $transaksi->pembeli_id = $validatedData['pembeli_id'];
-                $transaksi->kode_barang = $validatedData['kode_barang'];
-                $transaksi->jumlah_barang = $validatedData['jumlah_barang'];
-                $transaksi->total_harga = $validatedData['total_harga'];
-                $transaksi->tanggal_transaksi = $validatedData['tanggal_transaksi'];
-                $transaksi->status = $validatedData['status'];
-                
-                // Debugging: Periksa model sebelum save
-                \Log::info('Model Transaksi:', $transaksi->toArray());
-    
-                // Simpan transaksi
-                $transaksi->save();
-    
-                return redirect()->route('transaksi.index')
-                    ->with('success', 'Transaksi berhasil ditambahkan');
+
+                // Menyimpan transaksi dengan waktu otomatis
+                $transaksi = Transaksi::create([
+                    'kode_transaksi' => $this->generateKodeTransaksi(),
+                    'tanggal_transaksi' => now(), // Menyimpan tanggal saat ini
+                    'jam_transaksi' => Carbon::now()->format('H:i:s'), // Menyimpan waktu saat ini
+                    'pembeli_id' => $validatedData['pembeli_id'],
+                    'kode_barang' => $validatedData['kode_barang'],
+                    'jumlah_barang' => $validatedData['jumlah_barang'],
+                    'total_harga' => $validatedData['total_harga'],
+                    'status' => $validatedData['status'],
+                ]);
+
+                return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil ditambahkan');
             });
         } catch (\Exception $e) {
-            // Logging error yang detail
-            \Log::error('Error tambah transaksi:', [
+            Log::error('Error tambah transaksi:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'request_data' => $request->all()
             ]);
-    
-            return back()
-                ->withErrors(['error' => 'Gagal menambah transaksi: ' . $e->getMessage()])
-                ->withInput();
+            return back()->withErrors(['error' => 'Gagal menambah transaksi: ' . $e->getMessage()])->withInput();
         }
     }
 
+    /**
+     * Form edit transaksi
+     */
     public function edit(Transaksi $transaksi)
     {
         $pembelis = Pembeli::all();
         $barangs = Barang::all();
+
         return view('transaksi.edit', compact('transaksi', 'pembelis', 'barangs'));
     }
 
+    /**
+     * Update transaksi
+     */
     public function update(Request $request, Transaksi $transaksi)
     {
         try {
             return DB::transaction(function () use ($request, $transaksi) {
-                // Validasi
+                // Validasi data input
                 $validatedData = $request->validate([
-                    'kode_transaksi' => 'required|unique:transaksis,kode_transaksi,'.$transaksi->id,
                     'pembeli_id' => 'required|exists:pembelis,id',
                     'kode_barang' => 'required|exists:barangs,kode_barang',
                     'jumlah_barang' => 'required|numeric|min:1',
                     'total_harga' => 'required|numeric|min:0',
-                    'tanggal_transaksi' => 'required|date',
                     'status' => 'required|in:selesai,pending,batal'
                 ]);
 
@@ -134,10 +158,9 @@ public function create()
                 $barangLama = Barang::where('kode_barang', $transaksi->kode_barang)->first();
                 $barangLama->increment('stok', $transaksi->jumlah_barang);
 
-                // Cari barang baru
+                // Cari barang baru dan cek stok
                 $barangBaru = Barang::where('kode_barang', $request->kode_barang)->lockForUpdate()->first();
-                
-                // Cek stok
+
                 if (!$barangBaru || $barangBaru->stok < $request->jumlah_barang) {
                     throw new \Exception('Stok barang tidak mencukupi');
                 }
@@ -148,22 +171,21 @@ public function create()
                 // Update transaksi
                 $transaksi->update($validatedData);
 
-                return redirect()->route('transaksi.index')
-                    ->with('success', 'Transaksi berhasil diupdate');
+                return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil diupdate');
             });
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Tangani error validasi
-            return back()
-                ->withErrors($e->errors())
-                ->withInput();
-
         } catch (\Exception $e) {
-            Log::error('Error update transaksi: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Gagal update transaksi: ' . $e->getMessage()]);
+            Log::error('Error update transaksi:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()->withErrors(['error' => 'Gagal update transaksi: ' . $e->getMessage()])->withInput();
         }
     }
 
+    /**
+     * Hapus transaksi
+     */
     public function destroy(Transaksi $transaksi)
     {
         try {
@@ -175,14 +197,22 @@ public function create()
                 // Hapus transaksi
                 $transaksi->delete();
 
-                return redirect()->route('transaksi.index')
-                    ->with('success', 'Transaksi berhasil dihapus');
+                return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil dihapus');
             });
         } catch (\Exception $e) {
-            Log::error('Error hapus transaksi: ' . $e->getMessage());
+            Log::error('Error hapus transaksi:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return back()->withErrors(['error' => 'Gagal menghapus transaksi: ' . $e->getMessage()]);
         }
-    }public function show($id)
+    }
+
+    /**
+     * Tampilkan detail transaksi
+     */
+    public function show($id)
     {
         $transaksi = Transaksi::with(['pembeli', 'barang'])->findOrFail($id);
         return view('transaksi.show', compact('transaksi'));

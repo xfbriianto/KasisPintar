@@ -7,7 +7,6 @@
             <h3>Tambah Pembeli Baru</h3>
         </div>
         <div class="card-body">
-            {{-- Tampilkan pesan error --}}
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
@@ -15,6 +14,12 @@
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
                 </div>
             @endif
 
@@ -35,36 +40,10 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
-                    <label for="alamat" class="form-label">Alamat</label>
-                    <textarea 
-                        class="form-control @error('alamat') is-invalid @enderror" 
-                        id="alamat" 
-                        name="alamat" 
-                        required
-                    >{{ old('alamat') }}</textarea>
-                    @error('alamat')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <a href="{{ route('pembeli.index') }}" class="btn btn-secondary">Kembali</a>
                 </div>
-
-                <div class="mb-3">
-                    <label for="telepon" class="form-label">Telepon</label>
-                    <input 
-                        type="text" 
-                        class="form-control @error('telepon') is-invalid @enderror" 
-                        id="telepon" 
-                        name="telepon" 
-                        value="{{ old('telepon') }}"
-                        required
-                    >
-                    @error('telepon')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <button type="submit" class="btn btn-primary">Simpan</button>
-                <a href="{{ route('pembeli.index') }}" class="btn btn-secondary">Kembali</a>
             </form>
         </div>
     </div>

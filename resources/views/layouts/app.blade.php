@@ -5,124 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name', 'Aplikasi Inventory') }}</title>
     
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome 5 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* General Styles */
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa;
+        :root {
+            --primary-color: #6200ea;
+            --secondary-color: #03dac6;
+            --background-color: #f4f6f9;
+            --sidebar-bg: #2c3e50;
+            --sidebar-text: #bdc3c7;
         }
 
-        /* Sidebar Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        /* Sidebar */
         #sidebar {
-            min-height: 100vh;
-            width: 270px;
-            background: #2c3e50;
-            color: white;
-            position: fixed;
+            min-width: 270px;
+            max-width: 270px;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
             transition: all 0.3s ease;
-            z-index: 999;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
         }
 
         #sidebar .sidebar-header {
             padding: 20px;
             background: #1a252f;
             text-align: center;
-            border-bottom: 1px solid #444;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #sidebar .sidebar-header h5 {
+            color: white;
+            margin-bottom: 0;
         }
 
         #sidebar ul.components {
-            padding: 0;
-            list-style: none;
-            margin: 0;
-        }
-
-        #sidebar ul li {
-            border-bottom: 1px solid #444;
+            padding: 20px 0;
         }
 
         #sidebar ul li a {
             padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            color: #bdc3c7;
-            text-decoration: none;
+            display: block;
+            color: var(--sidebar-text);
             transition: all 0.3s ease;
+            text-decoration: none;
         }
 
         #sidebar ul li a:hover {
-            background: #34495e;
-            color: #ecf0f1;
+            color: white;
+            background: rgba(255,255,255,0.1);
         }
 
         #sidebar ul li a.active {
-            background: #2980b9;
             color: white;
-            font-weight: bold;
+            background: var(--primary-color);
         }
 
         #sidebar ul li a i {
-            margin-right: 15px;
-            font-size: 18px;
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
         }
 
+        /* Content Area */
         #content {
-            margin-left: 270px;
+            width: calc(100% - 270px);
             padding: 20px;
+            min-height: 100vh;
             transition: all 0.3s ease;
+            margin-left: 270px;
+            background: var(--background-color);
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
             #sidebar {
                 margin-left: -270px;
             }
+            #content {
+                width: 100%;
+                margin-left: 0;
+            }
             #sidebar.active {
                 margin-left: 0;
             }
-            #content {
-                margin-left: 0;
-            }
         }
 
-        /* Sidebar Toggle Button */
-        #sidebarCollapse {
-            background: #2c3e50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        /* Profile Section */
+        .profile-section {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        #sidebarCollapse:hover {
-            background: #34495e;
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
         }
 
-        /* Responsive Header for Mobile */
-        .navbar-light {
-            background-color: #ffffff;
-            border-bottom: 1px solid #ddd;
+        /* Scrollbar */
+        #sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        #sidebar::-webkit-scrollbar-track {
+            background: #1a252f;
+        }
+
+        #sidebar::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
         }
     </style>
     
     @yield('styles')
 </head>
 <body>
-    <div class="wrapper d-flex">
+    <div class="wrapper">
         <!-- Sidebar -->
         <nav id="sidebar">
             <div class="sidebar-header">
                 <h5>{{ config('app.name', 'Aplikasi Inventory') }}</h5>
             </div>
-
             <ul class="list-unstyled components">
                 <li>
                     <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -149,33 +184,40 @@
                         <i class="fas fa-truck"></i> Supplier
                     </a>
                 </li>
+                <li>
+                    </form>
+                </li>
             </ul>
         </nav>
 
         <!-- Page Content -->
         <div id="content">
-            <!-- Toggle Button for Mobile -->
-            <nav class="navbar navbar-expand-lg navbar-light d-lg-none">
+            <!-- Mobile Sidebar Toggle -->
+            <nav class="navbar navbar-expand-lg navbar-light d-lg-none mb-3">
                 <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn btn-dark">
+                    <button type="button" id="sidebarCollapse" class="btn btn-outline-dark">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
             </nav>
 
-            <main class="py-4">
+            <main>
                 @yield('content')
             </main>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5 .3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Sidebar Toggle Script -->
+    <!-- jQuery 3.6 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     <script>
-        document.getElementById('sidebarCollapse').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('active');
+        $(document).ready(function() {
+            $('#sidebarCollapse').on('click', function() {
+                $('#sidebar').toggleClass('active');
+            });
         });
     </script>
     

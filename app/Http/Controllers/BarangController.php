@@ -39,35 +39,73 @@ class BarangController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'kode_barang' => 'required|unique:barangs,kode_barang',
-            'kategori_id' => 'required|exists:kategoris,id',
-            'nama_barang' => 'required|max:255',
-            'harga_jual' => 'required|numeric|min:0',
-            'harga_dasar' => 'required|numeric|min:0',
-            'stok' => 'required|integer|min:0',
-            'diskon' => 'nullable|numeric|min:0|max:100',
-            'tipe_barang' => 'nullable|max:255'
-        ]);
-
-        try {
-            DB::beginTransaction();
+{
+    // Fungsi untuk mengonversi format Rupiah ke numeric
+    $convertRupiahToNumeric = function($value) {
+        if (is_string($value)) {
+            // Hapus awalan 'Rp' dan spasi
+            $value = str_replace('Rp', '', $value);
             
-            Barang::create($validatedData);
+            // Hapus titik sebagai pemisah ribuan
+            $value = str_replace('.', '', $value);
             
-            DB::commit();
+            // Ganti koma dengan titik untuk desimal
+            $value = str_replace(',', '.', $value);
             
-            return redirect()->route('barang.index')
-                ->with('success', 'Barang berhasil ditambahkan');
-        } catch (\Exception $e) {
-            DB::rollback();
+            // Hapus karakter non-numeric
+            $value = preg_replace('/[^0-9.]/', '', $value);
             
-            return redirect()->back()
-                ->with('error', 'Gagal menambahkan barang: ' . $e->getMessage())
-                ->withInput();
+            return floatval($value);
         }
+        return $value;
+    };
+
+    // Konversi nilai harga jual dan harga dasar
+    $hargaJual = $convertRupiahToNumeric($request->input('harga_jual_raw') ?? $request->input('harga_jual'));
+    $hargaDasar = $convertRupiahToNumeric($request->input('harga_dasar_raw') ?? $request->input('harga_dasar'));
+
+    // Modifikasi request sebelum validasi
+    $request->merge([
+        'harga_jual' => $hargaJual,
+        'harga_dasar' => $hargaDasar
+    ]);
+
+    // Validasi data
+    $validatedData = $request->validate([
+        'kode_barang' => 'required|unique:barangs,kode_barang',
+        'kategori_id' => 'required|exists:kategoris,id',
+        'nama_barang' => 'required|max:255',
+        'harga_jual' => 'required|numeric|min:0',
+        'harga_dasar' => 'required|numeric|min:0',
+        'stok' => 'required|integer|min:0',
+        'diskon' => 'nullable|numeric|min:0|max:100',
+        'tipe_barang' => 'nullable|max:255'
+    ], [
+        // Pesan error kustom (opsional)
+        'harga_jual.numeric' => 'Harga jual harus berupa angka.',
+        'harga_dasar.numeric' => 'Harga dasar harus berupa angka.',
+        'harga_jual.min' => 'Harga jual minimal 0.',
+        'harga_dasar.min' => 'Harga dasar minimal 0.'
+    ]);
+
+    try {
+        // Simpan data barang
+        $barang = Barang::create($validatedData);
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('barang.index')
+            ->with('success', 'Barang berhasil ditambahkan');
+    } catch (\Exception $e) {
+        // Log error jika terjadi masalah
+        Log::error('Error creating barang: ' . $e->getMessage());
+
+        // Redirect dengan pesan error
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Gagal menambahkan barang: ' . $e->getMessage());
     }
+}
+    
 
     public function show(Barang $barang)
     {

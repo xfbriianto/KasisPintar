@@ -1,15 +1,14 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace App\Http\Controllers;
+
 use App\Models\Barang;
 use App\Models\Pembeli;
 use App\Models\Transaksi;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class CreateDashboardTable extends Migration
+class DashboardController extends Controller
 {
     public function index()
     {
@@ -29,7 +28,7 @@ class CreateDashboardTable extends Migration
             DB::raw('MONTH(tanggal_transaksi) as bulan'),
             DB::raw('SUM(total_harga) as total_penjualan')
         )
-        ->whereYear('tanggal_transaksi', Carbon::now()->year )
+        ->whereYear('tanggal_transaksi', Carbon::now()->year)
         ->groupBy('bulan')
         ->orderBy('bulan')
         ->get();

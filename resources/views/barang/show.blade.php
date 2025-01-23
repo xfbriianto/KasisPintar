@@ -38,12 +38,6 @@
                     <strong>Harga Jual:</strong>
                     <p>Rp. {{ number_format($barang->harga_jual, 0, ',', '.') }}</p>
                 </div>
-                @if($barang->diskon > 0)
-                <div class="col-md-6 mb-3">
-                    <strong>Diskon:</strong>
-                    <p>{{ $barang->diskon }}%</p>
-                </div>
-                @endif
                 @if($barang->tipe_barang)
                 <div class="col-md-6 mb-3">
                     <strong>Tipe Barang:</strong>

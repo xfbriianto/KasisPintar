@@ -19,6 +19,7 @@ class CreateTransaksisTable extends Migration
             $table->integer('jumlah_barang');
             $table->decimal('total_harga', 15, 2);
             $table->date('tanggal_transaksi');
+            $table->time('jam_transaksi');
             $table->enum('status', ['pending', 'selesai', 'batal'])->default('pending');
             
             // Foreign key constraints
@@ -45,5 +46,5 @@ class CreateTransaksisTable extends Migration
         });
         
         Schema::dropIfExists('transaksis');
-    }
+    }
 }

@@ -51,22 +51,30 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Harga Jual</label>
-                        <input type="number" name="harga_jual" 
-                               class="form-control @error('harga_jual') is-invalid @enderror" 
+                        <label class="form-label">Harga Jual (Rp)</label>
+                        <input type="text" name="harga_jual" 
+                               id="harga_jual_input"
+                               class="form-control rupiah-input @error('harga_jual') is-invalid @enderror" 
                                value="{{ old('harga_jual') }}" 
-                               min="0" required>
+                               required>
+                        <input type="hidden" name="harga_jual_raw" 
+                               id="harga_jual_raw"
+                               value="{{ old('harga_jual') }}">
                         @error('harga_jual')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Harga Dasar</label>
-                        <input type="number" name="harga_dasar" 
-                               class="form-control @error('harga_dasar') is-invalid @enderror" 
+                        <label class="form-label">Harga Dasar (Rp)</label>
+                        <input type="text" name="harga_dasar" 
+                               id="harga_dasar_input"
+                               class="form-control rupiah-input @error('harga_dasar') is-invalid @enderror" 
                                value="{{ old('harga_dasar') }}" 
-                               min="0" required>
+                               required>
+                        <input type="hidden" name="harga_dasar_raw" 
+                               id="harga_dasar_raw"
+                               value="{{ old('harga_dasar') }}">
                         @error('harga_dasar')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -107,3 +115,60 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fungsi untuk memformat angka ke Rupiah
+    function formatRupiah(angka) {
+        let number_string = angka.replace(/[^,\d]/g, '').toString(),
+            split = number_string.split(','),
+            sisa = split[0].length % 3,
+            rupiah = split[0].substr(0, sisa),
+            ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+        if (ribuan) {
+            let separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+
+        rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+        return 'Rp ' + rupiah;
+    }
+
+    // Fungsi untuk menghilangkan format Rupiah
+    function unformatRupiah(rupiah) {
+        return rupiah.replace(/[^,\d]/g, '').replace(',', '.');
+    }
+
+    // Input Harga Jual
+    const hargaJualInput = document.getElementById('harga_jual_input');
+    const hargaJualRaw = document.getElementById('harga_jual_raw');
+
+    hargaJualInput.addEventListener('input', function() {
+        this.value = formatRupiah(this.value);
+        hargaJualRaw.value = unformatRupiah(this.value);
+    });
+
+    // Input Harga Dasar
+    const hargaDasarInput = document.getElementById('harga_dasar_input');
+    const hargaDasarRaw = document.getElementById('harga_dasar_raw');
+
+    hargaDasarInput.addEventListener('input', function() {
+        this.value = formatRupiah(this.value);
+        hargaDasarRaw.value = unformatRupiah(this.value);
+    });
+
+    // Set initial formatting if old values exist
+    if (hargaJualInput.value) {
+        hargaJualInput.value = formatRupiah(hargaJualInput.value);
+        hargaJualRaw.value = unformatRupiah(hargaJualInput.value);
+    }
+
+    if (hargaDasarInput.value) {
+        hargaDasarInput.value = formatRupiah(hargaDasarInput.value);
+        hargaDasarRaw.value = unformatRupiah(h argaDasarInput.value);
+    }
+});
+</script>
+@endpush

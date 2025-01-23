@@ -84,17 +84,6 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Diskon (%)</label>
-                        <input type="number" name="diskon" 
-                               class="form-control @error('diskon') is-invalid @enderror" 
-                               value="{{ old('diskon', $barang->diskon) }}" 
-                               min="0" max="100">
-                        @error('diskon')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-6 mb-3">
                         <label class="form-label">Tipe Barang</label>
                         <input type="text" name="tipe_barang" 
                                class="form-control @error('tipe_barang') is-invalid @enderror" 

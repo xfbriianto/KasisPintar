@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 
 class DetailTransaksiController extends Controller
 {
+    /**
+     * Menampilkan semua detail transaksi
+     */
     public function index()
     {
         $detailTransaksis = DetailTransaksi::with(['transaksi', 'barang'])->get();
@@ -16,6 +19,9 @@ class DetailTransaksiController extends Controller
         return view('detail_transaksis.index', compact('detailTransaksis', 'transaksis'));
     }
 
+    /**
+     * Form untuk menambah detail transaksi
+     */
     public function create()
     {
         $transaksis = Transaksi::all();
@@ -23,6 +29,9 @@ class DetailTransaksiController extends Controller
         return view('detail_transaksis.create', compact('transaksis', 'barangs'));
     }
 
+    /**
+     * Menyimpan detail transaksi baru
+     */
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -40,6 +49,9 @@ class DetailTransaksiController extends Controller
             ->with('success', 'Detail Transaksi berhasil ditambahkan');
     }
 
+    /**
+     * Form untuk mengedit detail transaksi
+     */
     public function edit(DetailTransaksi $detailTransaksi)
     {
         $transaksis = Transaksi::all();
@@ -47,6 +59,9 @@ class DetailTransaksiController extends Controller
         return view('detail_transaksis.edit', compact('detailTransaksi', 'transaksis', 'barangs'));
     }
 
+    /**
+     * Mengupdate detail transaksi
+     */
     public function update(Request $request, DetailTransaksi $detailTransaksi)
     {
         $validatedData = $request->validate([
@@ -64,6 +79,9 @@ class DetailTransaksiController extends Controller
             ->with('success', 'Detail Transaksi berhasil diupdate');
     }
 
+    /**
+     * Menghapus detail transaksi
+     */
     public function destroy(DetailTransaksi $detailTransaksi)
     {
         $detailTransaksi->delete();
@@ -72,18 +90,15 @@ class DetailTransaksiController extends Controller
             ->with('success', 'Detail Transaksi berhasil dihapus');
     }
 
+    /**
+     * Menampilkan detail transaksi
+     */
     public function show($id)
-{
-    
-    // Ambil data detail transaksi beserta relasi
-    $detailTransaksi = DetailTransaksi::with(['transaksi.pembeli', 'barang'])->findOrFail($id);
+    {
+        // Ambil data detail transaksi beserta relasi
+        $detailTransaksi = DetailTransaksi::with(['transaksi.pembeli', 'barang'])->findOrFail($id);
 
-    // Kirim data ke view
-    return view('detail_transaksis.show', compact('detailTransaksi'));
-    $transaksi = Transaksi::with('barang')->find($id);
-
-
-}
-
-
+        // Kirim data ke view
+        return view('detail_transaksis.show', compact('detailTransaksi'));
+    }
 }

@@ -34,18 +34,6 @@
                                                 {{ $pembeli->kode_pembeli ?? 'Tidak Ada' }}
                                             </span>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Alamat</th>
-                                        <td>{{ $pembeli->alamat ?? 'Tidak Ada' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Telepon</th>
-                                        <td>
-                                            <i class="fas fa-phone"></i> 
-                                            {{ $pembeli->telepon ?? 'Tidak Ada' }}
-                                        </td>
-                                    </tr>
                                     <tr>
                                         <th>Terdaftar Sejak</th>
                                         <td>
